@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name=" viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendar</title>
+  <style>
+    /* Style the calendar table */
+    .calendar {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    .calendar th, .calendar td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+    .calendar th {
+      background-color: #f0f0f0;
+    }
+    /* Style the selected date */
+    .selected {
+      background-color: #ff0000; /* Red */
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <h1>Calendar</h1>
+  <table class="calendar">
+    <thead>
+      <tr>
+        <th>Sun</th>
+        <th>Mon</th>
+        <th>Tue</th>
+        <th>Wed</th>
+        <th>Thu</th>
+        <th>Fri</th>
+        <th>Sat</th>
+      </tr>
+    </thead>
+    <tbody id="calendar-body">
+      <!-- Calendar body will be generated dynamically -->
+    </tbody>
+  </table>
+
+  <script>
+    // Get the current year and month
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth();
+
+    // Generate the calendar for this year and next year
+    for (let year = currentYear; year <= currentYear + 1; year++) {
+      for (let month = 0; month < 12; month++) {
+        generateCalendar(year, month);
+      }
+    }
+
+    // Function to generate the calendar for a given year and month
+    function generateCalendar(year, month) {
+      const calendarBody = document.getElementById("calendar-body");
+      const firstDayOfMonth = new Date(year, month, 1);
+      const lastDayOfMonth = new Date(year, month + 1, 0);
+      const daysInMonth = lastDayOfMonth.getDate();
+      const monthName = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][month];
+
+      // Create a new table row for the month header
+      const monthHeaderRow = document.createElement("tr");
+      calendarBody.appendChild(monthHeaderRow);
+
+      // Create a new table cell for the month header
+      const monthHeaderCell = document.createElement("th");
+      monthHeaderCell.colSpan = 7;
+      monthHeaderCell.textContent = `${monthName} ${year}`;
+      monthHeaderRow.appendChild(monthHeaderCell);
+
+      // Create a new table row for each week
+      for (let week = 0; week < 6; week++) {
+        const row = document.createElement("tr");
+        calendarBody.appendChild(row);
+
+        // Create a new table cell for each day of the week
+        for (let day = 0; day < 7; day++) {
+          const cell = document.createElement("td");
+          row.appendChild(cell);
+
+          // Calculate the date of the current cell
+          const date = new Date(year, month, (week * 7) + day - firstDayOfMonth.getDay() + 1);
+
+          // If the date is within the current month, display it
+          if (date.getMonth() === month) {
+            cell.textContent = date.getDate();
+            cell.dataset.date = date.toISOString().split("T")[0]; // Store the date in the dataset
+
+            // Add an event listener to the cell to change its color when clicked
+            cell.addEventListener("click", function() {
+              this.classList.toggle("selected");
+            });
+          } else {
+            cell.textContent = "";
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>
